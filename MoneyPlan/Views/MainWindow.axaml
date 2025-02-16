@@ -1,0 +1,70 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MoneyPlan.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MoneyPlan.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MoneyPlan">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="15" Margin="10">
+            <TextBlock>
+                <Run Text="{Binding Account.CashMoney, StringFormat='Cash money: {0}'}" />
+
+                <Run Text="{Binding Account.CardMoney, StringFormat='Card money: {0}'}" />
+
+                <Run Text="{Binding Account.SavingMoney, StringFormat='Saving money pool: {0}'}" />
+
+                <Run Text="{Binding Account.CurrentMoneyPool, StringFormat='Current money pool: {0}'}" />
+
+                <Run Text="{Binding Account.TotalMoney, StringFormat='Total money: {0}'}" />
+            </TextBlock>
+        </StackPanel>
+
+
+        <DataGrid Margin="20" ItemsSource="{Binding MoneyGoals}"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="Brown">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding State}" />
+                <DataGridTextColumn Header="Significance" Binding="{Binding Significance}" />
+                <DataGridTextColumn Header="Period" Binding="{Binding Period}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DataGrid Margin="20" ItemsSource="{Binding MoneySources}"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="Brown">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Amount" Binding="{Binding Expectation}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock>
+            <Run Text="Balance after spending: " />
+            <Run Text="{Binding BalanceAfterSpending}" />
+        </TextBlock>
+
+
+    </StackPanel>
+
+
+</Window>
