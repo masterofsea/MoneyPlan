@@ -9,12 +9,16 @@ public sealed class ApplicationContext : DbContext
     
     public ApplicationContext()
     {
+        // Database.GetDbConnection().Close();
+        // Dispose();
+
         Database.EnsureDeleted();
         Database.EnsureCreated();
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=money_plan.db");
+        optionsBuilder.UseSqlite("Data Source=mydatabase.db;Pooling=False");
+        //optionsBuilder.UseSqlite("Data Source=:memory:");
     }
 }

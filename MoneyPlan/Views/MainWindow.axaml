@@ -39,9 +39,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
                 <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding State}" />
-                <DataGridTextColumn Header="Significance" Binding="{Binding Significance}" />
-                <DataGridTextColumn Header="Period" Binding="{Binding Period}" />
+                <!-- <DataGridTextColumn Header="Status" Binding="{Binding State}" /> -->
+                <!-- <DataGridTextColumn Header="Significance" Binding="{Binding Significance}" /> -->
+                <!-- <DataGridTextColumn Header="Period" Binding="{Binding Period}" /> -->
             </DataGrid.Columns>
         </DataGrid>
 
@@ -62,9 +62,8 @@
             <Run Text="Balance after spending: " />
             <Run Text="{Binding BalanceAfterSpending}" />
         </TextBlock>
-
-
+        
+        <Button Command="{Binding CreateMoneyGoalCommand}" Content="Add goal"/>
+        
     </StackPanel>
-
-
 </Window>

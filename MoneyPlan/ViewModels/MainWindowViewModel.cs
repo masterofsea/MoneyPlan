@@ -1,57 +1,77 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reactive.Linq;
 using System.Windows.Input;
 using MoneyPlan.Models;
 using MoneyPlan.Repositories;
 using MoneyPlan.Services;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Reactive.Concurrency;
 
 namespace MoneyPlan.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
     public const int AccountId = 1;
+    private readonly AccountService _accountService;
+    public Interaction<CreateMoneyGoalViewModel, MoneyGoalViewModel?> ShowDialog { get; }
+    
+    public ICommand CreateMoneyGoalCommand { get; }
+
+
+    private async void LoadAccount()
+    {
+        await _accountService.AddAccount(new Account
+        {
+            CashMoney = 100,
+            CardMoney = 1800,
+            SavingMoney = 300,
+            EndOfPeriodDate = DateTime.Now.AddDays(25),
+        });
+            
+        Account = await _accountService.GetAccount(AccountId);
+            
+        RecalculateBalanceAfterSpending();
+    }
     public MainWindowViewModel()
     {
-        var accountService = new AccountService(new AccountRepository(new ApplicationContext()));
+        _accountService = new AccountService(new AccountRepository(new ApplicationContext()));
 
+        RxApp.MainThreadScheduler.Schedule(LoadAccount);
         
 
-        Task.Run(async () =>
+        ShowDialog = new Interaction<CreateMoneyGoalViewModel, MoneyGoalViewModel?>();
+
+        CreateMoneyGoalCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            await accountService.AddAccount(new Account
-            {
-                CashMoney = 100,
-                CardMoney = 1800,
-                SavingMoney = 300,
-                EndOfPeriodDate = DateTime.Now.AddDays(25),
-            });
-            
-            Account = await accountService.GetAccount(AccountId);
-            
-            RecalculateBalanceAfterSpending();
-        });
-        
-         
+            var goal = new CreateMoneyGoalViewModel();
 
-        AddGoalCommand = ReactiveCommand.Create(() =>
-        {
-            MoneyGoals.Add(new MoneyGoal
-            {
-                Title = NewGoalTitle!,
-                Amount = NewGoalAmount,
-                State = Status.Waiting,
-                Period = Period.Once,
-                Significance = Significance.Required,
-            });
+            var result = await ShowDialog.Handle(goal);
 
-            RecalculateBalanceAfterSpending();
+            if (result is not null)
+            {
+                MoneyGoals.Add(result);
+            }
         });
-        
-        
+
+
+
+        // AddGoalCommand = ReactiveCommand.Create(() =>
+        // {
+        //     MoneyGoals.Add(new MoneyGoal
+        //     {
+        //         Title = NewGoalTitle!,
+        //         Amount = NewGoalAmount,
+        //         State = Status.Waiting,
+        //         Period = Period.Once,
+        //         Significance = Significance.Required,
+        //     });
+        //
+        //     RecalculateBalanceAfterSpending();
+        // });
+
+
         // Task.Run(async () =>
         // {
         //     var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -76,29 +96,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public ObservableCollection<PublicHoliday> PublicHolidays { get; set; } = [];
-    public ObservableCollection<MoneyGoal> MoneyGoals { get; set; } =
-    [
-        new()
-        {
-            Title = "Colleague birthday",
-            Amount = 50,
-            State = Status.Completed
-        },
-
-        new()
-        {
-            Title = "Deutsch ticket",
-            Amount = 244,
-            State = Status.Waiting
-        },
-        new()
-        {
-            Title = "Food",
-            Amount = 19,
-            Period = Period.Daily,
-            State = Status.Continuation,
-        }
-    ];
+    public ObservableCollection<MoneyGoalViewModel> MoneyGoals { get; set; } = [];
     
     public ObservableCollection<MoneySource> MoneySources { get; set; } =
     [
@@ -122,18 +120,12 @@ public class MainWindowViewModel : ViewModelBase
 
     [Reactive] public decimal BalanceAfterSpending { get; private set; }
 
-    public string NewGoalTitle { get; set; }
-
-    public decimal NewGoalAmount { get; set; }
-
-    public ICommand AddGoalCommand { get; }
-
     private void RecalculateBalanceAfterSpending()
     {
-        var dailyCons = MoneyGoals.Where(g => g.Period is Period.Daily).Sum(g => g.Amount *
-            (decimal)(Account.EndOfPeriodDate - DateTime.Now).TotalDays);
-        var onceCons = MoneyGoals.Where(g => g.State is Status.Waiting).Sum(g => g.Amount);
-
-        BalanceAfterSpending = Account.CurrentMoneyPool - dailyCons - onceCons;
+        // var dailyCons = MoneyGoals.Where(g => g.Period is Period.Daily).Sum(g => g.Amount *
+        //     (decimal)(Account.EndOfPeriodDate - DateTime.Now).TotalDays);
+        // var onceCons = MoneyGoals.Where(g => g.State is Status.Waiting).Sum(g => g.Amount);
+        //
+        // BalanceAfterSpending = Account.CurrentMoneyPool - dailyCons - onceCons;
     }
 }
