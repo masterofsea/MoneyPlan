@@ -16,25 +16,10 @@
     </Design.DataContext>
 
     <StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="15" Margin="10">
-            <TextBlock>
-                <Run Text="{Binding Account.CashMoney, StringFormat='Cash money: {0}'}" />
-
-                <Run Text="{Binding Account.CardMoney, StringFormat='Card money: {0}'}" />
-
-                <Run Text="{Binding Account.SavingMoney, StringFormat='Saving money pool: {0}'}" />
-
-                <Run Text="{Binding Account.CurrentMoneyPool, StringFormat='Current money pool: {0}'}" />
-
-                <Run Text="{Binding Account.TotalMoney, StringFormat='Total money: {0}'}" />
-            </TextBlock>
-        </StackPanel>
-
-
         <DataGrid Margin="20" ItemsSource="{Binding MoneyGoals}"
                   GridLinesVisibility="All"
                   BorderThickness="1"
-                  BorderBrush="Brown">
+                  BorderBrush="Chartreuse">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" />

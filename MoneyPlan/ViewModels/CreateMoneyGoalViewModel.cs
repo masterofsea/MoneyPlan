@@ -1,25 +1,38 @@
-﻿using System.Reactive;
-using MoneyPlan.Models;
+﻿using System;
+using System.Reactive;
+using MoneyPlan.Domain.Models;
+using MoneyPlan.Intefaces;
 using ReactiveUI;
 
 namespace MoneyPlan.ViewModels;
 
 public class CreateMoneyGoalViewModel : ViewModelBase
 {
-    public CreateMoneyGoalViewModel()
+    private readonly IGoalsService _goalsService;
+
+    public CreateMoneyGoalViewModel(IGoalsService goalsService)
     {
-        AddNewGoalCommand = ReactiveCommand.Create(() => new MoneyGoalViewModel(new MoneyGoal
+        _goalsService = goalsService;
+
+        AddNewGoalCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            Title = NewGoalTitle,
-            Amount = NewGoalAmount,
-            State = Status.Cancelled,
-            Period = Period.Daily,
-            Significance = Significance.Required,
-        }));
+            var t = new MoneyGoal
+            {
+                Title = NewGoalTitle,
+                AccountId = Guid.Empty,
+                Amount = NewGoalAmount,
+                State = Status.Waiting,
+                Period = Period.Once,
+                Significance = Significance.Required,
+            };
+
+            await _goalsService.AddGoal(t);
+
+            return new MoneyGoalViewModel(t);
+        });
     }
 
     public ReactiveCommand<Unit, MoneyGoalViewModel> AddNewGoalCommand { get; }
-
 
     public string NewGoalTitle { get; set; } = string.Empty;
 

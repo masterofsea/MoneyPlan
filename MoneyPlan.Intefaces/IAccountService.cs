@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using MoneyPlan.Models;
+﻿using MoneyPlan.Domain.Models;
 
-namespace MoneyPlan.Services;
+namespace MoneyPlan.Intefaces;
 
 public interface IAccountService
 {

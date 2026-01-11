@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MoneyPlan.Models;
+﻿namespace MoneyPlan.Domain.Models;
 
 public interface ITimeExpectation
 {

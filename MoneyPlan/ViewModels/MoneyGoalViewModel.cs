@@ -1,4 +1,4 @@
-﻿using MoneyPlan.Models;
+﻿using MoneyPlan.Domain.Models;
 
 namespace MoneyPlan.ViewModels;
 

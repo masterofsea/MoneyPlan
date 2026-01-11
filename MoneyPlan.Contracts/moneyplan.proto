@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option csharp_namespace = "MoneyPlan.Contracts";
+package moneyplan.contracts;
+
+service MoneyGoalsGrpcService {
+  rpc CreateGoal (CreateGoalRequest) returns (CreateGoalResponse);
+  rpc GetGoals (CreateGoalRequest) returns (CreateGoalResponse);
+}
+    
+enum Status {
+  CONTINUATION = 0;
+  CANCELLED = 1;
+  WAITING = 2;
+  COMPLETED = 3;
+}
+
+enum Significance {
+  REQUIRED = 0;
+  WISHFUL = 1;
+}
+
+enum Period {
+  DAILY = 0;
+  MONTHLY = 1;
+  ONCE = 2;
+}
+
+message CreateGoalRequest {
+  string title = 2;
+  double amount = 3;
+  Status state = 4;
+  Period period = 5;
+  Significance significance = 6;
+}
+
+message CreateGoalResponse {
+  bool success  = 1;
+}
+
+message GetGoalsResponse {
+  repeated MoneyGoalModel goals = 1; // repeated — это аналог List в Protobuf
+}

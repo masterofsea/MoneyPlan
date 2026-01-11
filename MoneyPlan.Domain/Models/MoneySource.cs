@@ -1,4 +1,4 @@
-﻿namespace MoneyPlan.Models;
+﻿namespace MoneyPlan.Domain.Models;
 
 public abstract class MoneySource(ITimeExpectation expectation)
 {
